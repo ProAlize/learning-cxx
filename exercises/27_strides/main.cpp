@@ -1,5 +1,6 @@
 ﻿#include "../exercise.h"
 #include <vector>
+#include <iostream> // 用于输出调试信息
 
 // 张量即多维数组。连续存储张量即逻辑结构与存储结构一致的张量。
 // 通常来说，形状为 [d0, d1, ..., dn] 的张量，第 n 维是 dn 个连续的元素，第 n-1 维是 dn-1 个连续的 dn 个元素，以此类推。
@@ -15,9 +16,14 @@ using udim = unsigned int;
 /// @return 张量每维度的访问步长
 std::vector<udim> strides(std::vector<udim> const &shape) {
     std::vector<udim> strides(shape.size());
-    // TODO: 完成函数体，根据张量形状计算张量连续存储时的步长。
-    // READ: 逆向迭代器 std::vector::rbegin <https://zh.cppreference.com/w/cpp/container/vector/rbegin>
-    //       使用逆向迭代器可能可以简化代码
+    udim stride = 1; // 最后一个维度的步长为1
+
+    // 从最后一个维度开始逆向迭代，计算每个维度的步长
+    for(int i = static_cast<int>(shape.size()) - 1; i >= 0; --i){
+        strides[i] = stride;
+        stride *= shape[i];
+    }
+
     return strides;
 }
 
@@ -27,5 +33,6 @@ int main(int argc, char **argv) {
     ASSERT((strides({3, 4, 5}) == std::vector<udim>{20, 5, 1}), "Make this assertion pass.");
     ASSERT((strides({1, 3, 224, 224}) == std::vector<udim>{150528, 50176, 224, 1}), "Make this assertion pass.");
     ASSERT((strides({7, 1, 1, 1, 5}) == std::vector<udim>{5, 5, 5, 5, 1}), "Make this assertion pass.");
+    std::cout << "All assertions passed!" << std::endl;
     return 0;
 }
