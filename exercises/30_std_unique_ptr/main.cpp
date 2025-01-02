@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <iostream> // 添加用于调试的输出
 
 // READ: `std::unique_ptr` <https://zh.cppreference.com/w/cpp/memory/unique_ptr>
 
@@ -23,17 +22,14 @@ public:
 };
 
 using Unique = std::unique_ptr<Resource>;
-
 Unique reset(Unique ptr) {
     if (ptr) ptr->record('r');
     return std::make_unique<Resource>();
 }
-
 Unique drop(Unique ptr) {
     if (ptr) ptr->record('d');
     return nullptr;
 }
-
 Unique forward(Unique ptr) {
     if (ptr) ptr->record('f');
     return ptr;
@@ -42,31 +38,22 @@ Unique forward(Unique ptr) {
 int main(int argc, char **argv) {
     std::vector<std::string> problems[3];
 
-    // 第一条操作
     drop(forward(reset(nullptr)));
     problems[0] = std::move(RECORDS);
-    // 调试输出
-    std::cout << "problems[0]: ";
-    for(const auto &s : problems[0]) std::cout << s << " ";
-    std::cout << std::endl;
 
-    // 第二条操作
     forward(drop(reset(forward(forward(reset(nullptr))))));
     problems[1] = std::move(RECORDS);
-    // 调试输出
-    std::cout << "problems[1]: ";
-    for(const auto &s : problems[1]) std::cout << s << " ";
-    std::cout << std::endl;
 
-    // 第三条操作
     drop(drop(reset(drop(reset(reset(nullptr))))));
     problems[2] = std::move(RECORDS);
-    // 调试输出
-    std::cout << "problems[2]: ";
-    for(const auto &s : problems[2]) std::cout << s << " ";
-    std::cout << std::endl;
 
+    // ---- 不要修改以上代码 ----
 
+    std::vector<const char *> answers[]{
+        {"fr", "d"}, // problems[0]
+        {"fr", "f", "fr", "d", "f"}, // problems[1]
+        {"r", "r", "d", "r", "d", "d"} // problems[2]
+    };
 
     // ---- 不要修改以下代码 ----
 
